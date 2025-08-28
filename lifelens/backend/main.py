@@ -1,12 +1,13 @@
 from flask import request, jsonify
 from lifelens.backend import create_app
+from flask_cors import CORS
 from lifelens.backend.crud.users import (
     create_record, get_records, get_record,
     update_record, delete_record,create_user, update_result
 )
 
 app = create_app()
-
+CORS(app)    
 @app.route("/")
 def home():
     return {"msg": "Servidor Flask corriendo"}
