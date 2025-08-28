@@ -1,0 +1,222 @@
+
+
+// metodo para traer los datos de los usuarios => GET 
+        https://lifelens-db.vercel.app/user
+
+ejemplo => https://lifelens-db.vercel.app/user
+
+
+// metodo para traer la informaciond e un solo usuraio por su documento => GET
+        https://lifelens-db.vercel.app/document/document
+
+ejemplo => https://lifelens-db.vercel.app/document/1234568945
+
+// para pedir cualquier tabla con id = GET
+        https://lifelens-db.vercel.app/user/id
+        https://lifelens-db.vercel.app/gonogo/id
+        https://lifelens-db.vercel.app/t_hanoi/id
+        https://lifelens-db.vercel.app/stroop/id
+        https://lifelens-db.vercel.app/trail_making/id
+        https://lifelens-db.vercel.app/result/id
+
+ejemplo =>  
+        https://lifelens-db.vercel.app/user/5
+        https://lifelens-db.vercel.app/gonogo/5
+        https://lifelens-db.vercel.app/t_hanoi/5
+        https://lifelens-db.vercel.app/stroop/5
+        https://lifelens-db.vercel.app/trail_making/5
+        https://lifelens-db.vercel.app/result/5
+
+
+
+
+metodo para guardar la informacion en las tablas  por id => PUT
+
+        https://lifelens-db.vercel.app/gonogo/id
+        https://lifelens-db.vercel.app/t_hanoi/id
+        https://lifelens-db.vercel.app/trail_making/id
+        https://lifelens-db.vercel.app/stroop/id
+
+
+ejemplo =>        
+        https://lifelens-db.vercel.app/gonogo/5
+        https://lifelens-db.vercel.app/t_hanoi/5
+        https://lifelens-db.vercel.app/trail_making/5
+        https://lifelens-db.vercel.app/stroop/5
+
+Para acutalizar los resultados de ls tablas en la tabla resul utilizamos metodo => POST 
+
+        https://lifelens-db.vercel.app/users/id/calculate
+
+ejemplo =>
+        https://lifelens-db.vercel.app/users/16/calculate
+
+
+
+             
+-- Ejemplo completo desde crear hasta guardar la informacion 
+metodo para crear un nuevo usuario con sus variables  => POST
+
+        url => https://lifelens-db.vercel.app/user
+
+        data=>
+            {
+                "name": "Viviana",
+                "name2": "salome",
+                "last_name": "Betancur",
+                "last_name2": "Cano",
+                "document": "999999",
+                "city": "Medellín",
+                "clan": "Hopper",
+                "topy": "student",
+                "status": true
+                
+            }
+        resultado =>
+
+            {
+            "message": "Usuario creado con tablas auxiliares"
+             }
+
+
+        url  => https://lifelens-db.vercel.app/document/999999
+        result=>
+        
+            {
+            "city": "Medellín",
+            "clan": "Hopper",
+            "document": "999999",
+            "id_gonogo": 27,
+            "id_result": 77,
+            "id_stroop": 7,
+            "id_t_hanoi": 89,
+            "id_trail_making": 7,
+            "id_user": 78,
+            "last_name": "Betancur",
+            "last_name2": null,
+            "name": "Viviana",
+            "name2": null,
+            "status": null,
+            "topy": "student"
+             }
+
+
+        // agregamos datos en las tablas don su respectivo id method PUT
+
+        paso 1
+        url => https://lifelens-db.vercel.app/gonogo/27
+        data =>
+        
+            {
+            "hw_time_1": 40,
+            "hw_answer_1": 50,
+            "hw_score_1": 1.25,
+            "hw_time_2": 45,
+            "hw_answer_2": 30,
+            "hw_score_2": 0.67,
+            "hw_time_3": 45,
+            "hw_answer_3": 20,
+            "hw_score_3": 0.44,
+            "total_homewor": 18.75,
+            "Interference": 1.25,
+            "total_gonogo_answer": 33.33333333,
+            "total_gonogo": 0.79,
+            "climb": 0.82
+            }
+        resul =>
+            {
+            "message": "Record updated in gonogo"
+            }
+
+        paso 2
+         url => https://lifelens-db.vercel.app/t_hanoi/89
+        data =>
+        
+            {
+                "number_pieces": 6,
+                "number_pieces_r_side": 5,
+                "motion_rating": 3.5,
+                "time": 46,
+                "motion_rating2": 1.5,
+                "total_hanoi": 5.0
+            }
+
+        resul =>
+            {
+            "message": "Record updated in t_hanoi"
+            }
+
+        paso 3 
+
+         url => https://lifelens-db.vercel.app/trail_making/7
+        data =>
+        
+            
+            {
+            "correct_answers_A": 25,
+            "time_A": 30.2,
+            "score_A": 0.83,
+            "correct_answers_B": 24,
+            "time_B": 65,
+            "score_B": 0.4,
+            "total_correct_answers": 49,
+            "total_trail_making": 1.2
+            }
+                        
+
+        resul =>
+            {
+            "message": "Record updated in trail_making"
+            }
+
+        paso 4
+
+        url => https://lifelens-db.vercel.app/stroop/7
+        data =>
+        
+            {
+            "p": 1.1,
+            "c": 1.2,
+            "pc": 1.3,
+            "P_C": 0.5739130435,
+            "Interference":  0.7260869564,
+            "time": 60,
+            "time_homework_p": 15,
+            "time_homework_c": 15,
+            "time_homework_pc": 15,
+            "total_stroop": 0.06,
+            "climb": "MUY bajo"
+            }
+                        
+
+        resul =>
+            {
+            "message": "Record updated in stroop"
+            }
+
+        paso 5  --> acutalizar tabla result 
+
+            url => https://lifelens-db.vercel.app/users/77/calculate
+
+            resul=>
+
+                {
+                    "message": "Resultados actualizados para usuario 78"
+                }
+
+
+        Ver los resultados de la tabla resutl 
+
+       url => https://lifelens-db.vercel.app/result/77
+        resul =>
+        {
+            "Inhibitory_control": 0.85,
+            "cognitive_flexibility": 5.79,
+            "comprehensive_outcome": 1.7625,
+            "executive_functioning": 5.06,
+            "id_result": 7,
+            "planning": 6.2,
+            "processing_speed": 6.2,
+            "strategic_learning": 5.0,
+            "working_memory": 0.85
+        }
