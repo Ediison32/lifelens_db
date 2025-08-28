@@ -27,3 +27,6 @@ python -m venv venv
 .\venv\Scripts\activate
 # or
 source venv/bin/activate
+
+# run proyext 
+python -m lifelens.backend.main
