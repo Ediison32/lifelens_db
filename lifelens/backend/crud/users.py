@@ -51,6 +51,8 @@ def update_record(table: str, id_value: int, data: dict, id_column: str = "id"):
 
 
 def delete_record(table: str, id_value: int, id_column: str = "id"):
+    print("esntro a eliminar")
+    print(table, id_column, id_value)
     try:
         table = table.lower()
 
@@ -58,7 +60,7 @@ def delete_record(table: str, id_value: int, id_column: str = "id"):
             # 1. Obtener el usuario por document
             row = db.session.execute(
                 text("SELECT id_user, id_result, id_gonogo, id_stroop, id_t_hanoi, id_trail_making "
-                    "FROM user WHERE document = :doc"),
+                    "FROM user WHERE id_column = :doc"),
                 {"doc": id_value}
             ).mappings().first()
             if not row:
