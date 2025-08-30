@@ -1,4 +1,4 @@
-
+from flask import jsonify
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from lifelens.backend.db import db
@@ -78,7 +78,7 @@ def delete_record(table: str, id_value: int, id_column: str = "id"):
                 db.session.execute(text(f"DELETE FROM {tbl} WHERE {col} = :v"), {"v": val})
 
             db.session.commit()
-            return {"message": "Usuario y registros relacionados eliminados"}, 200
+            return {"message": "User and related records deleted"}, 200
 
         else:
             sql = text(f"DELETE FROM {table} WHERE {id_column} = :id_val")
@@ -94,6 +94,7 @@ def delete_record(table: str, id_value: int, id_column: str = "id"):
 def create_user(table: str, data: dict):
 
     print(data)
+    print("inteento crar ")
     try:
         dup = db.session.execute(
             text("SELECT 1 FROM user WHERE document = :doc"),
@@ -103,11 +104,11 @@ def create_user(table: str, data: dict):
 
         
         db.session.execute(
-            text("CALL add_user_pack(:name, :last_name, :document, :city, :clan, :topy)"),
+            text("CALL add_user_pack(:name, :name2, :last_name, :last_name2,  :document, :city, :clan, :topy)"),
             data
         )
         db.session.commit()
-        return {"message": "Usuario creado con tablas auxiliares"}, 201
+        return {"message": "User created with auxiliary tables"}, 201
     except SQLAlchemyError as e:
         return _handle_error(e)
     
@@ -140,8 +141,45 @@ def update_result(user_id: int):
         """)
         db.session.execute(sql, {'uid': user_id})
         db.session.commit()
-        return {"message": f"Resultados actualizados para usuario {user_id}"}, 200
+        return {"message": f"Updated results for user {user_id}"}, 200
 
     except SQLAlchemyError as e:
         db.session.rollback()
         return {"error": str(e)}, 500
+    
+
+def get_all_totals():
+    sql = text("""
+        SELECT
+            u.document,                                   
+            g.total_gonogo,
+            s.total_stroop,
+            h.total_hanoi,
+            t.total_trail_making,
+            COALESCE(s.total_stroop,0) + COALESCE(g.total_gonogo,0)         AS calc_inhibitory,
+            COALESCE(g.total_gonogo,0)  + COALESCE(h.total_hanoi,0)         AS calc_flexibility,
+            COALESCE(h.total_hanoi,0)   + COALESCE(t.total_trail_making,0)  AS calc_planning,
+            COALESCE(h.total_hanoi,0)                                       AS calc_strategic,
+            COALESCE(t.total_trail_making,0) + COALESCE(h.total_hanoi,0)    AS calc_processing,
+            COALESCE(s.total_stroop,0) + COALESCE(g.total_gonogo,0)
+            + COALESCE(h.total_hanoi,0) + COALESCE(t.total_trail_making,0)  AS calc_comprehensive,
+            r.Inhibitory_control,
+            r.executive_functioning,
+            r.working_memory,
+            r.cognitive_flexibility,
+            r.planning,
+            r.strategic_learning,
+            r.processing_speed,
+            r.comprehensive_outcome
+        FROM user AS u
+        LEFT JOIN gonogo       g ON g.id_gonogo        = u.id_gonogo
+        LEFT JOIN stroop       s ON s.id_stroop        = u.id_stroop
+        LEFT JOIN t_hanoi      h ON h.id_t_hanoi       = u.id_t_hanoi
+        LEFT JOIN trail_making t ON t.id_trail_making  = u.id_trail_making
+        LEFT JOIN result       r ON r.id_result        = u.id_result
+    """)
+    try:
+        rows = db.session.execute(sql).mappings().fetchall()
+        return jsonify([dict(r) for r in rows]), 200
+    except SQLAlchemyError as e:
+        return _handle_error(e)

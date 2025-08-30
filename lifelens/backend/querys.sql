@@ -125,12 +125,14 @@ CREATE TABLE `user` (
 
 DELIMITER $$
 CREATE PROCEDURE add_user_pack(
-    IN p_name      VARCHAR(50),
-    IN p_last_name VARCHAR(50),
-    IN p_document  VARCHAR(50),
-    IN p_city      VARCHAR(50),
-    IN p_clan      VARCHAR(50),
-    IN p_topy      VARCHAR(50)
+    IN p_name       VARCHAR(50),
+    IN p_name2      VARCHAR(50),      -- nuevo
+    IN p_last_name  VARCHAR(50),
+    IN p_last_name2 VARCHAR(50),      -- nuevo
+    IN p_document   VARCHAR(50),
+    IN p_city       VARCHAR(50),
+    IN p_clan       VARCHAR(50),
+    IN p_topy       VARCHAR(50)
 )
 BEGIN
     DECLARE v_g  INT;
@@ -146,10 +148,10 @@ BEGIN
     INSERT INTO result        () VALUES (); SET v_r = LAST_INSERT_ID();
 
     INSERT INTO user
-        (name, last_name, document, city, clan, topy,
+        (name, name2, last_name, last_name2, document, city, clan, topy,
          id_gonogo, id_stroop, id_t_hanoi, id_trail_making, id_result)
     VALUES
-        (p_name, p_last_name, p_document, p_city, p_clan, p_topy,
+        (p_name, p_name2, p_last_name, p_last_name2, p_document, p_city, p_clan, p_topy,
          v_g, v_s, v_h, v_t, v_r);
 END $$
 DELIMITER ;
