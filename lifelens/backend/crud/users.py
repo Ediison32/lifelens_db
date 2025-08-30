@@ -60,7 +60,7 @@ def delete_record(table: str, id_value: int, id_column: str = "id"):
             # 1. Obtener el usuario por document
             row = db.session.execute(
                 text("SELECT id_user, id_result, id_gonogo, id_stroop, id_t_hanoi, id_trail_making "
-                    "FROM user WHERE id_column = :doc"),
+                    "FROM user WHERE id_user = :doc"),
                 {"doc": id_value}
             ).mappings().first()
             if not row:
