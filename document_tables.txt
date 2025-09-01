@@ -121,7 +121,7 @@ metodo para crear un nuevo usuario con sus variables  => POST
             "Interference": 1.25,
             "total_gonogo_answer": 33.33333333,
             "total_gonogo": 0.79,
-            "climb": 0.82
+            "climb": "medio"
             }
         resul =>
             {
@@ -220,3 +220,115 @@ metodo para crear un nuevo usuario con sus variables  => POST
             "strategic_learning": 5.0,
             "working_memory": 0.85
         }
+
+
+
+
+    -- traer todos los calculos totals de todas las tablas y la tabla result completa 
+
+            GET 
+            https://lifelens-db.vercel.app/users_total
+
+            {
+        "Inhibitory_control": null,
+        "calc_comprehensive": 0.0,
+        "calc_flexibility": 0.0,
+        "calc_inhibitory": 0.0,
+        "calc_planning": 0.0,
+        "calc_processing": 0.0,
+        "calc_strategic": 0.0,
+        "cognitive_flexibility": null,
+        "comprehensive_outcome": null,
+        "document": "12345888",
+        "executive_functioning": null,
+        "planning": null,
+        "processing_speed": null,
+        "strategic_learning": null,
+        "total_gonogo": null,
+        "total_hanoi": null,
+        "total_stroop": null,
+        "total_trail_making": null,
+        "working_memory": null
+    },
+    {
+        "Inhibitory_control": null,
+        "calc_comprehensive": 0.0,
+        "calc_flexibility": 0.0,
+        "calc_inhibitory": 0.0,
+        "calc_planning": 0.0,
+        "calc_processing": 0.0,
+        "calc_strategic": 0.0,
+        "cognitive_flexibility": null,
+        "comprehensive_outcome": null,
+        "document": "1234588899",
+        "executive_functioning": null,
+        "planning": null,
+        "processing_speed": null,
+        "strategic_learning": null,
+        "total_gonogo": null,
+        "total_hanoi": null,
+        "total_stroop": null,
+        "total_trail_making": null,
+        "working_memory": null
+    }
+
+
+    para la peticion a al ia se necesita lo siguiente => POST
+    http://localhost:5000/api/chat/name 
+
+
+    ejemplo =>
+    http://localhost:5000/api/chat/edison
+
+    variable all_result ={
+
+            "datos": {
+                "stroop": {
+                "p": 1.1,
+                "c": 1.2,
+                "pc": 1.3,
+                "P_C": 0.57,
+                "Interference": 0.72,
+                "time": 60,
+                "climb": "MUY bajo"
+                },
+                "gonogo": {
+                "hw_time_1": 40,
+                "hw_answer_1": 50,
+                "hw_score_1": 1.25,
+                "total_gonogo": 0.79,
+                "climb": "medio"
+                },
+                "hanoi": {
+                "number_pieces": 6,
+                "number_pieces_r_side": 5,
+                "motion_rating": 3.5,
+                "time": 46,
+                "total_hanoi": 5.0
+                },
+                "trail_making": {
+                "correct_answers_A": 25,
+                "time_A": 30.2,
+                "score_A": 0.83,
+                "total_trail_making": 1.2
+                },
+                "resul": {
+                "Inhibitory_control": 0.85,
+                "cognitive_flexibility": 5.79,
+                "executive_functioning": 5.06,
+                "planning": 6.2,
+                "processing_speed": 6.2,
+                "strategic_learning": 5.0,
+                "working_memory": 0.85
+                }
+
+            }}
+
+
+            para usar lo que retorna la ia con js y mostrar al usuraio  ==>
+                return response.json()["choices"][0]["message"]["content"]
+
+
+D:\Riwi\proyecto_integrador\document_tables.txt
+D:\Riwi\proyecto_integrador\lifelens\backend\main.py
+D:\Riwi\proyecto_integrador\lifelens\backend\crud\users.py

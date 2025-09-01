@@ -2,6 +2,13 @@ from flask import jsonify
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from lifelens.backend.db import db
+from dotenv import load_dotenv
+import os
+import requests
+
+load_dotenv()
+
+
 
 def _handle_error(e: SQLAlchemyError):
     db.session.rollback()
@@ -185,3 +192,73 @@ def get_all_totals():
         return jsonify([dict(r) for r in rows]), 200
     except SQLAlchemyError as e:
         return _handle_error(e)
+    
+
+
+## ia 
+
+
+BASE_PROMPT  = '''
+Eres un psicólogo experto en evaluación cognitiva. Te daré los resultados de varias pruebas neuropsicológicas.
+
+Tu tarea es:
+
+Resaltar primero los aspectos positivos y fortalezas de la persona.
+
+Señalar de manera breve y amable las áreas que puede mejorar.
+
+Dar recomendaciones prácticas y fáciles de aplicar para entrenar esas habilidades.
+
+Importante:
+
+No muestres ni repitas valores, escalas o resultados numéricos.
+
+No generes tablas ni listas de puntajes.
+
+Usa los resultados solo como referencia interna para tu análisis.
+
+La respuesta debe ser breve, motivadora y clara.
+
+Ejemplo de cómo quiero la respuesta:
+
+    Has demostrado una buena capacidad de organización y rapidez en el procesamiento de la información,
+    lo cual es una fortaleza importante para resolver problemas de manera eficiente. Una de tus oportunidades 
+    de mejora está en la memoria de trabajo, donde podrías beneficiarte de ejercicios que fortalezcan la concentración
+    y la retención de información a corto plazo. Para ello, te recomiendo practicar juegos de memoria, 
+    realizar ejercicios de atención plena y pequeños desafíos mentales diarios. Estas actividades te ayudarán a
+        potenciar aún más tu rendimiento.
+'''
+
+
+def ia_api(data: str, usuario: str):
+    try:
+        finalPrompt = (
+            f"{os.getenv('BASE_PROMPT', 'BASE_PROMPT_NO_DEFINIDO')}\n\n"
+            f"Nombre del usuario: {usuario}\n"
+            f"Resultados: {data}"
+        )
+
+        print("welcome that server")
+
+        headers = {
+            "Authorization": f"Bearer {os.getenv('OPENAI_API_KEY')}",
+            "Content-Type": "application/json",
+        }
+
+        body = {
+            "model": "gpt-4o-mini",
+            "messages": [{"role": "user", "content": finalPrompt}],
+            "temperature": 0.7,
+            "max_tokens": 600,
+        }
+
+        response = requests.post(
+            "https://api.openai.com/v1/chat/completions",
+            headers=headers,
+            json=body
+        )
+        response.raise_for_status()  
+        return response.json()
+
+    except Exception as e:
+        return {"error": str(e)}

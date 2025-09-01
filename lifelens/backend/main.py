@@ -1,9 +1,16 @@
-from flask import request
+from flask import request, jsonify
 from lifelens.backend import create_app
 from flask_cors import CORS
 from lifelens.backend.crud.users import (
-    create_record, get_records, get_record,
-    update_record, delete_record,create_user, update_result,get_all_totals
+    create_record, 
+    get_records, 
+    get_record,
+    update_record, 
+    delete_record,
+    create_user, 
+    update_result,
+    get_all_totals, 
+    ia_api
 )
 
 app = create_app()
@@ -26,19 +33,29 @@ def handle_table(table):
         return get_all_totals()
     return get_records(table)
 
+
 # actualizar toda la tabla result segunel id 
 # POST /users/7/calculate
 @app.route("/users/<int:user_id>/calculate", methods=["POST"])
 def recalc_user(user_id):
     return update_result(user_id)
 
+@app.route("/api/chat/<string:data>", methods = ["POST"])
+def api_chat(data):
 
+    body = request.get_json()
 
+    # ia_api(body,data)
+    return jsonify(ia_api(body,data))
 # get user 
 #GET /user/12345678
+
+
+
 @app.route("/<string:table>/<string:document>", methods=["GET"])
 def get_user(user_id):
     # 1. El usuario se busca en la tabla "users" por su id_user
+    
     table  = "user"
     id_val = user_id
     id_col = "document"
