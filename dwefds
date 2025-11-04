@@ -1,0 +1,19 @@
+* [33m98a6096[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevs[m[33m)[m The code is updated by removing the results with the AI ​​agent.
+* [33m8c26828[m The code is updated by removing the results with the AI ​​agent.
+* [33md8e456a[m  add admint
+* [33mdc289ca[m[33m ([m[1;31morigin/main[m[33m)[m  requirementes.txt #3
+* [33mdc0fd4a[m  requirementes.txt #2
+* [33me1572f9[m  requirementes.txt
+* [33m92c966c[m add route open_ia
+* [33m3f58412[m document update delete
+* [33mc979d1f[m document update
+* [33m1ad3b20[m  add function get_all_total
+* [33md1012c3[m Instruction document is added for requests and to the backend and saved to the DB
+* [33mb50a489[m clean requirements for Vercel Linux build
+* [33mb79949c[m  add CORS and fix PyMySQL dialect
+* [33m5d6dfbb[m Replace mysqlclient with pymysql for Vercel
+* [33m0a3b1aa[m connected to the cloud database with aiven
+* [33mc3accea[m add folder
+* [33mc6c7e36[m add library json
+* [33m3901b86[m project connected to the db and complete crud
+* [33m2f91c6e[m crud is created for the users table
