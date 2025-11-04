@@ -230,35 +230,35 @@ Ejemplo de cómo quiero la respuesta:
 '''
 
 
-def ia_api(data: str, usuario: str):
-    try:
-        finalPrompt = (
-            f"{os.getenv('BASE_PROMPT', 'BASE_PROMPT_NO_DEFINIDO')}\n\n"
-            f"Nombre del usuario: {usuario}\n"
-            f"Resultados: {data}"
-        )
+# def ia_api(data: str, usuario: str):
+    # try:
+    #     finalPrompt = (
+    #         f"{os.getenv('BASE_PROMPT', 'BASE_PROMPT_NO_DEFINIDO')}\n\n"
+    #         f"Nombre del usuario: {usuario}\n"
+    #         f"Resultados: {data}"
+    #     )
 
-        print("welcome that server")
+    #     print("welcome that server")
 
-        headers = {
-            "Authorization": f"Bearer {os.getenv('OPENAI_API_KEY')}",
-            "Content-Type": "application/json",
-        }
+    #     headers = {
+    #         "Authorization": f"Bearer {os.getenv('OPENAI_API_KEY')}",
+    #         "Content-Type": "application/json",
+    #     }
 
-        body = {
-            "model": "gpt-4o-mini",
-            "messages": [{"role": "user", "content": finalPrompt}],
-            "temperature": 0.7,
-            "max_tokens": 600,
-        }
+    #     body = {
+    #         "model": "gpt-4o-mini",
+    #         "messages": [{"role": "user", "content": finalPrompt}],
+    #         "temperature": 0.7,
+    #         "max_tokens": 600,
+    #     }
 
-        response = requests.post(
-            "https://api.openai.com/v1/chat/completions",
-            headers=headers,
-            json=body
-        )
-        response.raise_for_status()  
-        return response.json()
+    #     response = requests.post(
+    #         "https://api.openai.com/v1/chat/completions",
+    #         headers=headers,
+    #         json=body
+    #     )
+    #     response.raise_for_status()  
+    #     return response.json()
 
-    except Exception as e:
-        return {"error": str(e)}
+    # except Exception as e:
+    #     return {"error": str(e)}
