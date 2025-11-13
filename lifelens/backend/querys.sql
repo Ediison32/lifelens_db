@@ -102,7 +102,7 @@ CREATE TABLE `user` (
         ON UPDATE CASCADE ON DELETE RESTRICT,
         
     CONSTRAINT `fk_users_t_hanoi`
-        FOREIGN KEY (`id_t_hanoi`) REFERENCES `T_hanoi`(`id_t_hanoi`)
+        FOREIGN KEY (`id_t_hanoi`) REFERENCES `t_hanoi`(`id_hanoi`)
         ON UPDATE CASCADE ON DELETE RESTRICT,
         
     CONSTRAINT `fk_users_stroop`

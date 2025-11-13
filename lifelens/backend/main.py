@@ -60,12 +60,15 @@ def handle_record(table, id_val):
     if request.method == "GET" and table == 'document':
         table = "user"
         id_col = "document"
+        
         return get_record(table, id_val, id_col)
     
 
     #http://localhost:5000/user/id_user
     elif request.method == "GET":
         id_col = "id_"+table
+        if table == "user":
+            update_result(id_val)
         return get_record(table, id_val, id_col)
     
 
@@ -82,3 +85,6 @@ def handle_record(table, id_val):
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
+
+
+# https://lifelensadmin.vercel.app/analitica.html?id=2
