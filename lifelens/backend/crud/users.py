@@ -45,77 +45,70 @@ def get_record(table: str, id_value: int, id_column: str):
     except SQLAlchemyError as e:
         return _handle_error(e)
 
-def update_record(table: str, id_value: int, data: dict, id_column: str = "id"):
-    try:
-        print(f"La tabla es {table}:::::::::::::")
-        print(data)
-        set_clause = ", ".join(f"{k} = :{k}" for k in data.keys())
-        sql = text(f"UPDATE {table} SET {set_clause} WHERE {id_column} = :id_val")
-        data["id_val"] = id_value
-        db.session.execute(sql, data)
-        db.session.commit()
-        return {"message": f"Record updated in {table}"}, 200
-    except SQLAlchemyError as e:
-        return _handle_error(e)
-
-
-# def update_record(table: str, id_value: int, data: dict, id_column: str = None):
+# def update_record(table: str, id_value: int, data: dict, id_column: str = "id"):
 #     try:
-#         print(f"La tabla es {table}:::::::::::::")
-#         print(data)
-#         # Ajustar nombre del id_column según tabla
-#         if not id_column:
-#             id_column = {
-#                 "gonogo": "id_gonogo",
-#                 "stroop": "id_stroop",
-#                 "t_hanoi": "id_t_hanoi",
-#                 "trail_making": "id_trail_making",
-#                 "user": "id_user",
-#                 "result": "id_result"
-#             }.get(table, "id")
-
-#         # Mapear claves JSON a nombres exactos de columna por tabla
-#         if table == "gonogo":
-#             column_mapping = {
-#                 "interference": "Interference",
-#                 "total_homework": "total_homewor",
-#                 # agrega más si fuera necesario
-#             }
-#             data = {column_mapping.get(k, k): v for k, v in data.items()}
-
-#         elif table == "stroop":
-#             column_mapping = {
-#                 "interference": "Interference",
-#                 "p_c": "P_C",
-#                 # otros posibles mapeos
-#             }
-#             data = {column_mapping.get(k, k): v for k, v in data.items()}
-
-#         elif table == "t_hanoi":
-#             column_mapping = {
-#                 # solo si hay diferencias de nombre en JSON
-#             }
-#             data = {column_mapping.get(k, k): v for k, v in data.items()}
-
-#         elif table == "trail_making":
-#             column_mapping = {
-#                 # si tu JSON difiere de los nombres DB
-#             }
-#             data = {column_mapping.get(k, k): v for k, v in data.items()}
-
-#         # Construir la cláusula SET del UPDATE
 #         set_clause = ", ".join(f"{k} = :{k}" for k in data.keys())
-
 #         sql = text(f"UPDATE {table} SET {set_clause} WHERE {id_column} = :id_val")
 #         data["id_val"] = id_value
-
 #         db.session.execute(sql, data)
 #         db.session.commit()
-
-#         return {"message": f"Record updated in {table} and data es  = {data}"}, 200
-
+#         return {"message": f"Record updated in {table}"}, 200
 #     except SQLAlchemyError as e:
 #         return _handle_error(e)
+
+def update_record(table: str, id_value: int, data: dict, id_column: str = None):
+    try:
+        print(f"🔹 Actualizando tabla: {table}")
+        print(f"📦 Datos recibidos: {data}")
+
+        # Determinar columna de ID según la tabla
+        if not id_column:
+            id_column = {
+                "gonogo": "id_gonogo",
+                "stroop": "id_stroop",
+                "t_hanoi": "id_t_hanoi",
+                "trail_making": "id_trail_making",
+                "user": "id_user",
+                "result": "id_result"
+            }.get(table, "id")
+
+        # --- Mapear nombres de columnas según la tabla ---
+        if table == "gonogo":
+            column_mapping = {
+                "interference": "Interference",
+                "total_homework": "total_homewor",  # Ajuste exacto al nombre en DB
+            }
+        elif table == "stroop":
+            column_mapping = {
+                "interference": "Interference",
+                "p_c": "P_C"
+            }
+        else:
+            column_mapping = {}
+
+        # Aplicar mapeo (manteniendo los no mapeados igual)
+        data = {column_mapping.get(k, k): v for k, v in data.items()}
+
+        # --- Eliminar claves con valor None, pero mantener ceros ---
+        data = {k: v for k, v in data.items() if v is not None}
+
+        # --- Construir la cláusula SET dinámica ---
+        set_clause = ", ".join(f"{k} = :{k}" for k in data.keys())
+
+        sql = text(f"UPDATE {table} SET {set_clause} WHERE {id_column} = :id_val")
+        data["id_val"] = id_value
+
+        # Ejecutar el UPDATE
+        db.session.execute(sql, data)
+        db.session.commit()
+
+        print(f"✅ Registro actualizado correctamente en {table}.")
+        return {"message": f"Record updated in {table}", "data": data}, 200
+
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        print(f"❌ Error al actualizar {table}: {str(e)}")
+        return {"error": str(e)}, 500
 
 
 
