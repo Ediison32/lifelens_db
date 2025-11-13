@@ -56,6 +56,61 @@ def get_record(table: str, id_value: int, id_column: str):
 #     except SQLAlchemyError as e:
 #         return _handle_error(e)
 
+# def update_record(table: str, id_value: int, data: dict, id_column: str = None):
+#     try:
+#         print(f"🔹 Actualizando tabla: {table}")
+#         print(f"📦 Datos recibidos: {data}")
+
+#         # Determinar columna de ID según la tabla
+#         if not id_column:
+#             id_column = {
+#                 "gonogo": "id_gonogo",
+#                 "stroop": "id_stroop",
+#                 "t_hanoi": "id_t_hanoi",
+#                 "trail_making": "id_trail_making",
+#                 "user": "id_user",
+#                 "result": "id_result"
+#             }.get(table, "id")
+
+#         # --- Mapear nombres de columnas según la tabla ---
+#         if table == "gonogo":
+#             column_mapping = {
+#                 "interference": "Interference",
+#                 "total_homework": "total_homewor",  # Ajuste exacto al nombre en DB
+#             }
+#         elif table == "stroop":
+#             column_mapping = {
+#                 "interference": "Interference",
+#                 "p_c": "P_C"
+#             }
+#         else:
+#             column_mapping = {}
+
+#         # Aplicar mapeo (manteniendo los no mapeados igual)
+#         data = {column_mapping.get(k, k): v for k, v in data.items()}
+
+#         # --- Eliminar claves con valor None, pero mantener ceros ---
+#         data = {k: v for k, v in data.items() if v is not None}
+
+#         # --- Construir la cláusula SET dinámica ---
+#         set_clause = ", ".join(f"{k} = :{k}" for k in data.keys())
+
+#         sql = text(f"UPDATE {table} SET {set_clause} WHERE {id_column} = :id_val")
+#         data["id_val"] = id_value
+
+#         # Ejecutar el UPDATE
+#         db.session.execute(sql, data)
+#         db.session.commit()
+
+#         print(f"✅ Registro actualizado correctamente en {table}.")
+#         return {"message": f"Record updated in {table}", "data": data}, 200
+
+#     except SQLAlchemyError as e:
+#         db.session.rollback()
+#         print(f"❌ Error al actualizar {table}: {str(e)}")
+#         return {"error": str(e)}, 500
+
+
 def update_record(table: str, id_value: int, data: dict, id_column: str = None):
     try:
         print(f"🔹 Actualizando tabla: {table}")
@@ -76,7 +131,7 @@ def update_record(table: str, id_value: int, data: dict, id_column: str = None):
         if table == "gonogo":
             column_mapping = {
                 "interference": "Interference",
-                "total_homework": "total_homewor",  # Ajuste exacto al nombre en DB
+                "total_homework": "total_homewor",  # ajuste exacto al nombre en DB
             }
         elif table == "stroop":
             column_mapping = {
@@ -89,16 +144,29 @@ def update_record(table: str, id_value: int, data: dict, id_column: str = None):
         # Aplicar mapeo (manteniendo los no mapeados igual)
         data = {column_mapping.get(k, k): v for k, v in data.items()}
 
-        # --- Eliminar claves con valor None, pero mantener ceros ---
+        # --- Normalizar datos ---
+        def normalize_value(v):
+            # Si el valor es una cadena vacía o None → ignorar
+            if v in ("", None):
+                return None
+            # Si el valor es cadena numérica → convertir
+            if isinstance(v, str) and v.replace('.', '', 1).isdigit():
+                return float(v) if '.' in v else int(v)
+            return v
+
+        data = {k: normalize_value(v) for k, v in data.items()}
+
+        # --- Eliminar claves con valor None (manteniendo 0 y "0") ---
         data = {k: v for k, v in data.items() if v is not None}
 
         # --- Construir la cláusula SET dinámica ---
         set_clause = ", ".join(f"{k} = :{k}" for k in data.keys())
-
         sql = text(f"UPDATE {table} SET {set_clause} WHERE {id_column} = :id_val")
+
+        # Agregar id al diccionario
         data["id_val"] = id_value
 
-        # Ejecutar el UPDATE
+        # Ejecutar UPDATE
         db.session.execute(sql, data)
         db.session.commit()
 
@@ -109,8 +177,6 @@ def update_record(table: str, id_value: int, data: dict, id_column: str = None):
         db.session.rollback()
         print(f"❌ Error al actualizar {table}: {str(e)}")
         return {"error": str(e)}, 500
-
-
 
 def delete_record(table: str, id_value: int, id_column: str = "id"):
     print("esntro a eliminar")
