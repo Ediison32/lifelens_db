@@ -59,6 +59,8 @@ def get_record(table: str, id_value: int, id_column: str):
 
 def update_record(table: str, id_value: int, data: dict, id_column: str = None):
     try:
+        print(f"La tabla es {table}:::::::::::::")
+        print(data)
         # Ajustar nombre del id_column según tabla
         if not id_column:
             id_column = {
