@@ -110,7 +110,7 @@ def update_record(table: str, id_value: int, data: dict, id_column: str = None):
         db.session.execute(sql, data)
         db.session.commit()
 
-        return {"message": f"Record updated in {table}"}, 200
+        return {"message": f"Record updated in {table} and data es  = {data}"}, 200
 
     except SQLAlchemyError as e:
         return _handle_error(e)
