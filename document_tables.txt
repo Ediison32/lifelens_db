@@ -132,7 +132,7 @@ metodo para crear un nuevo usuario con sus variables  => POST
          url => https://lifelens-db.vercel.app/t_hanoi/89
         data =>
         
-            {
+            
                 "number_pieces": 6,
                 "number_pieces_r_side": 5,
                 "motion_rating": 3.5,
@@ -140,7 +140,7 @@ metodo para crear un nuevo usuario con sus variables  => POST
                 "motion_rating2": 1.5,
                 "total_hanoi": 5.0
             }
-
+{
         resul =>
             {
             "message": "Record updated in t_hanoi"
