@@ -956,24 +956,6 @@ CREATE TABLE `user` (
         ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
-INSERT INTO gonogo (hw_time_1, hw_answer_1, hw_score_1, hw_time_2, hw_answer_2, hw_score_2, hw_time_3, hw_answer_3, hw_score_3, total_homewor, Interference, total_gonogo_answer, total_gonogo, climb)
-VALUES (0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-
--- T_hanoi
-INSERT INTO t_hanoi (number_pieces, number_pieces_r_side, motion_rating, time, motion_rating2, total_hanoi)
-VALUES (0,0,0,0,0,0);
-
--- stroop
-INSERT INTO stroop (p, c, pc, P_C, Interference, time, time_homework_p, time_homework_c, time_homework_pc, total_stroop, climb)
-VALUES (0,0,0,0,0,0,0,0,0,0,0);
-
--- trail_making
-INSERT INTO trail_making (total_trail_making, correct_answers_A, time_A, score_A, correct_answers_B, time_B, score_B, total_correct_answers)
-VALUES (0,0,0,0,0,0,0,0);
-
--- results
-INSERT INTO result () VALUES ();
-
 
 
 
@@ -1009,3 +991,157 @@ BEGIN
          v_g, v_s, v_h, v_t, v_r);
 END $$ 
  DELIMITER ;
+
+
+
+
+-------------------------------------------------------------------
+## posgres sql 
+
+CREATE TABLE result (
+    id_result SERIAL PRIMARY KEY,
+    Inhibitory_control REAL,
+    executive_functioning REAL,
+    working_memory REAL,
+    cognitive_flexibility REAL,
+    planning REAL,
+    strategic_learning REAL,
+    processing_speed REAL,
+    comprehensive_outcome REAL
+);
+
+CREATE TABLE gonogo (
+    id_gonogo SERIAL PRIMARY KEY,
+    hw_time_1 REAL,
+    hw_answer_1 REAL,
+    hw_score_1 REAL,
+    hw_time_2 REAL,
+    hw_answer_2 REAL,
+    hw_score_2 REAL,
+    hw_time_3 REAL,
+    hw_answer_3 REAL,
+    hw_score_3 REAL,
+    Interference REAL,
+    total_homewor REAL,
+    total_gonogo_answer REAL,
+    total_gonogo REAL,
+    climb VARCHAR(50)
+);
+
+CREATE TABLE t_hanoi (
+    id_t_hanoi SERIAL PRIMARY KEY,
+    number_pieces INTEGER,
+    number_pieces_r_side INTEGER,
+    motion_rating REAL,
+    time REAL,
+    motion_rating2 REAL,
+    total_hanoi REAL
+);
+
+CREATE TABLE stroop (
+    id_stroop SERIAL PRIMARY KEY,
+    p REAL,
+    c REAL,
+    pc REAL,
+    P_C REAL,
+    Interference REAL,
+    time REAL,
+    time_homework_p REAL,
+    time_homework_c REAL,
+    time_homework_pc REAL,
+    total_stroop REAL,
+    climb VARCHAR(50)
+);
+
+CREATE TABLE trail_making (
+    id_trail_making SERIAL PRIMARY KEY,
+    total_trail_making REAL,
+    correct_answers_A INTEGER,
+    time_A REAL,
+    score_A REAL,
+    correct_answers_B INTEGER,
+    time_B REAL,
+    score_B REAL,
+    total_correct_answers REAL
+);
+
+CREATE TABLE "user" (
+    id_user SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    name2 VARCHAR(50),
+    last_name VARCHAR(50) NOT NULL,
+    last_name2 VARCHAR(50),
+    document VARCHAR(50) NOT NULL UNIQUE,
+    city VARCHAR(50),
+    clan VARCHAR(50) NOT NULL,
+    topy VARCHAR(50),
+    status BOOLEAN,
+    id_gonogo INTEGER,
+    id_t_hanoi INTEGER,
+    id_stroop INTEGER,
+    id_trail_making INTEGER,
+    id_result INTEGER,
+
+    CONSTRAINT fk_users_gonogo
+        FOREIGN KEY (id_gonogo) REFERENCES gonogo(id_gonogo)
+        ON UPDATE CASCADE ON DELETE RESTRICT,
+
+    CONSTRAINT fk_users_t_hanoi
+        FOREIGN KEY (id_t_hanoi) REFERENCES t_hanoi(id_t_hanoi)
+        ON UPDATE CASCADE ON DELETE RESTRICT,
+
+    CONSTRAINT fk_users_stroop
+        FOREIGN KEY (id_stroop) REFERENCES stroop(id_stroop)
+        ON UPDATE CASCADE ON DELETE RESTRICT,
+
+    CONSTRAINT fk_users_trail
+        FOREIGN KEY (id_trail_making) REFERENCES trail_making(id_trail_making)
+        ON UPDATE CASCADE ON DELETE RESTRICT,
+
+    CONSTRAINT fk_user_result
+        FOREIGN KEY (id_result) REFERENCES result(id_result)
+        ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+CREATE OR REPLACE PROCEDURE add_user_pack(
+    p_name       VARCHAR(50),
+    p_name2      VARCHAR(50),
+    p_last_name  VARCHAR(50),
+    p_last_name2 VARCHAR(50),
+    p_document   VARCHAR(50),
+    p_city       VARCHAR(50),
+    p_clan       VARCHAR(50),
+    p_topy       VARCHAR(50)
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_g INT;
+    v_s INT;
+    v_h INT;
+    v_t INT;
+    v_r INT;
+BEGIN
+    INSERT INTO gonogo DEFAULT VALUES;
+    SELECT currval(pg_get_serial_sequence('gonogo', 'id_gonogo')) INTO v_g;
+
+    INSERT INTO stroop DEFAULT VALUES;
+    SELECT currval(pg_get_serial_sequence('stroop', 'id_stroop')) INTO v_s;
+
+    INSERT INTO t_hanoi DEFAULT VALUES;
+    SELECT currval(pg_get_serial_sequence('t_hanoi', 'id_t_hanoi')) INTO v_h;
+
+    INSERT INTO trail_making DEFAULT VALUES;
+    SELECT currval(pg_get_serial_sequence('trail_making', 'id_trail_making')) INTO v_t;
+
+    INSERT INTO result DEFAULT VALUES;
+    SELECT currval(pg_get_serial_sequence('result', 'id_result')) INTO v_r;
+
+    INSERT INTO "user"
+        (name, name2, last_name, last_name2, document, city, clan, topy,
+         id_gonogo, id_stroop, id_t_hanoi, id_trail_making, id_result)
+    VALUES
+        (p_name, p_name2, p_last_name, p_last_name2, p_document, p_city,
+         p_clan, p_topy, v_g, v_s, v_h, v_t, v_r);
+END;
+$$;
