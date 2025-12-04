@@ -7,7 +7,7 @@ from lifelens.backend.crud.users import (
     get_record,
     update_record, 
     delete_record,
-    create_users, 
+    create_user, 
     update_result,
     get_all_totals
 )
