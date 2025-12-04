@@ -123,7 +123,7 @@ def update_record(table: str, id_value: int, data: dict, id_column: str = None):
                 "stroop": "id_stroop",
                 "t_hanoi": "id_t_hanoi",
                 "trail_making": "id_trail_making",
-                "user": "id_user",
+                "users": "id_user",
                 "result": "id_result"
             }.get(table, "id")
 
@@ -188,7 +188,7 @@ def delete_record(table: str, id_value: int, id_column: str = "id"):
             # 1. Obtener el usuario por document
             row = db.session.execute(
                 text("SELECT id_user, id_result, id_gonogo, id_stroop, id_t_hanoi, id_trail_making "
-                    "FROM user WHERE id_user = :doc"),
+                    "FROM users WHERE id_user = :doc"),
                 {"doc": id_value}
             ).mappings().first()
             if not row:
@@ -197,7 +197,7 @@ def delete_record(table: str, id_value: int, id_column: str = "id"):
 
             user_id = row["id_user"]
             deletes = [
-                ("user",         "id_user",         user_id),
+                ("users",         "id_user",         user_id),
                 ("result",       "id_result",       row["id_result"]),
                 ("gonogo",       "id_gonogo",       row["id_gonogo"]),
                 ("stroop",       "id_stroop",       row["id_stroop"]),
@@ -227,7 +227,7 @@ def create_user(table: str, data: dict):
     print("inteento crar ")
     try:
         dup = db.session.execute(
-            text("SELECT 1 FROM user WHERE document = :doc"),
+            text("SELECT 1 FROM users WHERE document = :doc"),
             {"doc": data["document"]}).fetchone()
         if dup:
             return {"error": "User already exists (duplicate document)"}, 409  
@@ -248,7 +248,7 @@ def update_result(user_id: int):
     try:
         sql = text("""
             UPDATE result AS r
-        JOIN user         AS u ON u.id_result        = r.id_result
+        JOIN users         AS u ON u.id_result        = r.id_result
         JOIN stroop       AS s ON s.id_stroop        = u.id_stroop
         JOIN gonogo       AS g ON g.id_gonogo        = u.id_gonogo
         JOIN t_hanoi      AS h ON h.id_t_hanoi       = u.id_t_hanoi
@@ -301,7 +301,7 @@ def get_all_totals():
             r.strategic_learning,
             r.processing_speed,
             r.comprehensive_outcome
-        FROM user AS u
+        FROM users AS u
         LEFT JOIN gonogo       g ON g.id_gonogo        = u.id_gonogo
         LEFT JOIN stroop       s ON s.id_stroop        = u.id_stroop
         LEFT JOIN t_hanoi      h ON h.id_t_hanoi       = u.id_t_hanoi
