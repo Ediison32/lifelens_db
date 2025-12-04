@@ -7,7 +7,7 @@ from lifelens.backend.crud.users import (
     get_record,
     update_record, 
     delete_record,
-    create_user, 
+    create_users, 
     update_result,
     get_all_totals
 )
@@ -22,11 +22,11 @@ def home():
 
 @app.route("/<string:table>", methods=["GET", "POST"])
 def handle_table(table):
-    if request.method == "POST" and table != 'user':
+    if request.method == "POST" and table != 'users':
         print(  request.json)
         return create_record(table, request.json)
     
-    elif( request.method == "POST" and table == 'user'):
+    elif( request.method == "POST" and table == 'users'):
         return create_user(table, request.json)
     elif(table == "users_total"):
         return get_all_totals()
@@ -45,7 +45,7 @@ def recalc_user(user_id):
 def get_user(user_id):
     # 1. El usuario se busca en la tabla "users" por su id_user
     
-    table  = "user"
+    table  = "users"
     id_val = user_id
     id_col = "document"
     return get_record(table, id_val, id_col)
@@ -58,7 +58,7 @@ def handle_record(table, id_val):
 
     # para traer usuario por documento ---- > http://localhost:5000/document/documento
     if request.method == "GET" and table == 'document':
-        table = "user"
+        table = "users"
         id_col = "document"
         
         return get_record(table, id_val, id_col)
@@ -67,7 +67,7 @@ def handle_record(table, id_val):
     #http://localhost:5000/user/id_user
     elif request.method == "GET":
         id_col = "id_"+table
-        if table == "user":
+        if table == "users":
             update_result(id_val)
         return get_record(table, id_val, id_col)
     
@@ -79,7 +79,7 @@ def handle_record(table, id_val):
     
 
     elif request.method == "DELETE":
-        if table == 'user': 
+        if table == 'users': 
             id_col = "id_"+table
             return delete_record(table, id_val, id_col)
 
