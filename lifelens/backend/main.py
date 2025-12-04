@@ -68,19 +68,23 @@ def handle_record(table, id_val):
     elif request.method == "GET":
         id_col = "id_"+table
         if table == "users":
+            id_col = "id_user"
             update_result(id_val)
         return get_record(table, id_val, id_col)
     
 
     # actualizar con id 
     elif request.method == "PUT":
+        if table == "users":
+            id_col = "id_user"
+            return update_record(table, id_val, request.json, id_col)
         id_col = "id_"+table
         return update_record(table, id_val, request.json, id_col)
     
 
     elif request.method == "DELETE":
         if table == 'users': 
-            id_col = "id_"+table
+            id_col = "id_user"
             return delete_record(table, id_val, id_col)
 
 if __name__ == "__main__":
