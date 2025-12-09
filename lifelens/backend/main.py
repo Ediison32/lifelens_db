@@ -62,7 +62,7 @@ def handle_record(table, id_val):
         id_col = "document"
         
         #return get_record(table, id_val, id_col)
-    return get_record(table, str(id_val), id_col)
+        return get_record(table, str(id_val), id_col)
     
 
     #http://localhost:5000/user/id_user
