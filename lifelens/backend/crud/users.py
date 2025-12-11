@@ -247,30 +247,33 @@ def create_user(table: str, data: dict):
 def update_result(user_id: int):
     try:
         sql = text("""
-            UPDATE result AS r
-        JOIN users         AS u ON u.id_result        = r.id_result
-        JOIN stroop       AS s ON s.id_stroop        = u.id_stroop
-        JOIN gonogo       AS g ON g.id_gonogo        = u.id_gonogo
-        JOIN t_hanoi      AS h ON h.id_t_hanoi       = u.id_t_hanoi
-        JOIN trail_making AS t ON t.id_trail_making  = u.id_trail_making
-        SET
-            r.inhibitory_control    = COALESCE(s.total_stroop,0) + COALESCE(g.total_gonogo,0),
-            r.executive_functioning = COALESCE(s.total_stroop,0) + COALESCE(h.total_hanoi,0),
-            r.working_memory        = COALESCE(s.total_stroop,0) + COALESCE(g.total_gonogo,0),
-            r.cognitive_flexibility = COALESCE(g.total_gonogo,0) + COALESCE(h.total_hanoi,0),
-            r.planning              = COALESCE(h.total_hanoi,0)   + COALESCE(t.total_trail_making,0),
-            r.strategic_learning    = COALESCE(h.total_hanoi,0),
-            r.processing_speed      = COALESCE(t.total_trail_making,0) + COALESCE(h.total_hanoi,0),
-            r.comprehensive_outcome = (
-            COALESCE(s.total_stroop,0)
-            + COALESCE(g.total_gonogo,0)
-            + COALESCE(h.total_hanoi,0)
-            + COALESCE(t.total_trail_making,0)
-            ) / 4
+            UPDATE result r
+            SET
+                inhibitory_control    = COALESCE(s.total_stroop, 0) + COALESCE(g.total_gonogo, 0),
+                executive_functioning = COALESCE(s.total_stroop, 0) + COALESCE(h.total_hanoi, 0),
+                working_memory        = COALESCE(s.total_stroop, 0) + COALESCE(g.total_gonogo, 0),
+                cognitive_flexibility = COALESCE(g.total_gonogo, 0) + COALESCE(h.total_hanoi, 0),
+                planning              = COALESCE(h.total_hanoi, 0) + COALESCE(t.total_trail_making, 0),
+                strategic_learning    = COALESCE(h.total_hanoi, 0),
+                processing_speed      = COALESCE(t.total_trail_making, 0) + COALESCE(h.total_hanoi, 0),
+                comprehensive_outcome = (
+                    COALESCE(s.total_stroop, 0) +
+                    COALESCE(g.total_gonogo, 0) +
+                    COALESCE(h.total_hanoi, 0) +
+                    COALESCE(t.total_trail_making, 0)
+                ) / 4
+            FROM users u
+            JOIN stroop       s ON s.id_stroop        = u.id_stroop
+            JOIN gonogo       g ON g.id_gonogo        = u.id_gonogo
+            JOIN t_hanoi      h ON h.id_t_hanoi       = u.id_t_hanoi
+            JOIN trail_making t ON t.id_trail_making  = u.id_trail_making
             WHERE u.id_user = :uid
+            AND r.id_result = u.id_result;
         """)
+
         db.session.execute(sql, {'uid': user_id})
         db.session.commit()
+
         return {"message": f"Updated results for user {user_id}"}, 200
 
     except SQLAlchemyError as e:
